@@ -38,7 +38,7 @@ import com.edu.appfeature.features.api.displaypage.YouTubeSearchButton
 import com.edu.appfeature.ui.theme.BabyBlue
 import com.edu.appfeature.ui.theme.veryLightColor
 import com.edu.appfeature.ui.util.TextView
-import java.util.regex.Pattern
+import com.edu.appfeature.ui.util.getVideoId
 
 @SuppressLint("MutableCollectionMutableState", "ServiceCast")
 @Composable
@@ -218,7 +218,7 @@ fun VideoViewScreen() {
                     text = "Neymar da Silva Santos Júnior (born 5 February 1992), known as Neymar Júnior or mononymously as Neymar, is a Brazilian professional footballer who plays as a forward for Saudi Pro League club Al Hilal and the Brazil national team. A prolific goalscorer and playmaker, he is widely regarded as one of the best players in the world and the best Brazilian player of his generation.[3][4][5] Neymar has scored at least 100 goals for three different clubs, making him one of the few players to achieve this feat.",
                     style = TextStyle(
                         fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold,
+                        fontWeight = FontWeight.Normal,
                         textAlign = TextAlign.Justify
                     ),
                     modifier = Modifier.padding(top = 20.dp)
@@ -236,7 +236,7 @@ fun VideoViewScreen() {
                     text = "Neymar da Silva Santos Júnior (born 5 February 1992), known as Neymar Júnior or mononymously as Neymar, is a Brazilian professional footballer who plays as a forward for Saudi Pro League club Al Hilal and the Brazil national team. A prolific goalscorer and playmaker, he is widely regarded as one of the best players in the world and the best Brazilian player of his generation.[3][4][5] Neymar has scored at least 100 goals for three different clubs, making him one of the few players to achieve this feat.",
                     style = TextStyle(
                         fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold,
+                        fontWeight = FontWeight.Normal,
                         textAlign = TextAlign.Justify
                     ),
                     modifier = Modifier.padding(top = 20.dp)
@@ -245,7 +245,7 @@ fun VideoViewScreen() {
                     text = "Neymar finished third for the FIFA Ballon d'Or in 2015 and 2017, has been awarded the FIFA Puskás Award, has been named in the FIFA FIFPro World11 twice, and the UEFA Champions League Squad of the Season three times. Off the pitch, he ranks among the world's most prominent sportsmen.",
                     style = TextStyle(
                         fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold,
+                        fontWeight = FontWeight.Normal,
                         textAlign = TextAlign.Justify
                     ),
                     modifier = Modifier.padding(top = 20.dp)
@@ -253,16 +253,5 @@ fun VideoViewScreen() {
                 Spacer(modifier = Modifier.padding(bottom = 15.dp))
             }
         }
-    }
-}
-
-fun getVideoId(videoUrl: String): String {
-    val pattern = "(?<=\\?v=)[a-zA-Z0-9_-]*"
-    val compiledPattern = Pattern.compile(pattern)
-    val matcher = compiledPattern.matcher(videoUrl)
-    return if (matcher.find()) {
-        matcher.group()
-    } else {
-        ""
     }
 }

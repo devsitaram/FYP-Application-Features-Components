@@ -145,10 +145,11 @@ fun YouTubePlayerWithUrl(
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(1.dp)),
                 factory = { context ->
-                    YouTubePlayerView(context = context).apply {
+                    YouTubePlayerView(context).apply {
                         lifecycleOwner.lifecycle.addObserver(this)
                         addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
                             override fun onReady(youTubePlayer: YouTubePlayer) {
+//                                youTubePlayer.setPlaybackQuality(YouTubePlayer.PlaybackQuality.HD720)
                                 player.value = youTubePlayer
                             }
                         })

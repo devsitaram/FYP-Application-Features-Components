@@ -54,7 +54,6 @@ fun getVideoId(videoUrl: String): String {
     val pattern = "(?<=\\?v=)[a-zA-Z0-9_-]*"
     val compiledPattern = Pattern.compile(pattern)
     val matcher = compiledPattern.matcher(videoUrl)
-
     return if (matcher.find()) {
         matcher.group()
     } else {
