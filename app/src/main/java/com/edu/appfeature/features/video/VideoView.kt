@@ -152,7 +152,8 @@ fun YouTubePlayerWithUrl(
 //                                youTubePlayer.setPlaybackQuality(YouTubePlayer.PlaybackQuality.HD720)
                                 player.value = youTubePlayer
                             }
-                        })
+                        }
+                        )
                     }
                 }
             )
