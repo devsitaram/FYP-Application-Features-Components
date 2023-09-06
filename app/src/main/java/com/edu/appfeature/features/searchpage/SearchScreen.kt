@@ -1,78 +1,77 @@
 package com.edu.appfeature.features.searchpage
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.airbnb.lottie.LottieProperty
+import androidx.navigation.NavHostController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionResult
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.LottieDynamicProperty
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.edu.appfeature.R
+import com.edu.appfeature.features.navehostwithdatapass.DataPojo
+import com.edu.appfeature.features.navehostwithdatapass.DataViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchViewScreen() {
+fun SearchViewScreen(navHostController: NavHostController, dataViewModel: DataViewModel) {
     val viewModel = viewModel<SearchViewModel>()
     val searchText by viewModel.searchText.collectAsState()
-    val persons by viewModel.persons.collectAsState()
+    val games by viewModel.games.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
 
-    var viewBlankSearch by remember { mutableStateOf(true) }
-
     Surface(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.Center) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             TextField(
                 value = searchText,
                 onValueChange = viewModel::onSearchingTextChange,
-                modifier = Modifier.fillMaxWidth().clickable { viewBlankSearch = false },
+                modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text(text = "Search") },
                 maxLines = 1,
-                singleLine = true
+                singleLine = true,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null
+                    )
+                }
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            if (viewBlankSearch) {
+            if (searchText.isEmpty()) {
                 SearchAnimated()
             } else {
                 if (isSearching) {
@@ -81,14 +80,22 @@ fun SearchViewScreen() {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1f)
+                            .fillMaxHeight()
+                            .weight(1f),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        items(persons) { person ->
+                        items(games) { game ->
                             Text(
-                                text = person.name, // Fixed the typo here
+                                text = game.name, // Fixed the typo here
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 16.dp)
+                                    .padding(10.dp)
+                                    .clickable {
+                                        // navigate the custom page
+                                        val dataDetails = DataPojo(name = game.name, imageUri = game.imageUri)
+                                        dataViewModel.addSubjectDetails(newSubjectDetails = dataDetails)
+                                        navHostController.navigate("Parallax_Screen")
+                                    },
                             )
                         }
                     }
@@ -101,33 +108,34 @@ fun SearchViewScreen() {
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun SearchAnimated() {
-    val isPlaying by remember { mutableStateOf(true) }
-
+//    val isPlaying by remember { mutableStateOf(true) }
     val compositionResult: LottieCompositionResult =
         rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.animation_2))
 
     val progress by animateLottieCompositionAsState(
         composition = compositionResult.value,
-        isPlaying = isPlaying,
+        isPlaying = true,
         iterations = LottieConstants.IterateForever,
         speed = 0.7f
     )
-    Column(modifier = Modifier.wrapContentWidth()) {
-        Box(modifier = Modifier, contentAlignment = Alignment.Center) {
-            LottieAnimation(
-                composition = compositionResult.value,
-                progress = progress,
-                modifier = Modifier
+    Box(
+        modifier = Modifier
+            .fillMaxHeight()
+            .fillMaxWidth(), contentAlignment = Alignment.Center
+    ) {
+        LottieAnimation(
+            composition = compositionResult.value,
+            progress = progress,
+            modifier = Modifier.size(200.dp)
+        )
+        Text(
+            text = "Search",
+            style = TextStyle(
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                fontFamily = FontFamily.Cursive,
+                color = Color.Unspecified
             )
-            Text(
-                text = "Search",
-                style = TextStyle(
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.Normal,
-                    fontFamily = FontFamily.Cursive,
-                    color = Color.Unspecified
-                )
-            )
-        }
+        )
     }
 }

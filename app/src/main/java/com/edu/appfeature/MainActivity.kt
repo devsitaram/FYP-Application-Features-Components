@@ -7,8 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
+import com.edu.appfeature.features.navehostwithdatapass.NavigateDataPassViewScreen
 import com.edu.appfeature.ui.theme.AppFeatureTheme
-import com.edu.appfeature.features.searchpage.SearchViewScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +23,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    SearchViewScreen()
+                    val navHostController = rememberNavController()
+                    NavigateDataPassViewScreen(navHostController)
 //                    LottieAnimationScreen()
 //                    VideoViewScreen()
 //                    val videoUrl = "https://www.youtube.com/watch?v=fdvdd123"

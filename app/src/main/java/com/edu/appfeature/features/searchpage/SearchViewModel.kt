@@ -19,25 +19,24 @@ class SearchViewModel : ViewModel() {
     private val _isSearching = MutableStateFlow(false)
     val isSearching = _isSearching.asStateFlow()
 
-    private val _persons = MutableStateFlow(allPerson)
-    val persons = searchText
+    private val _games = MutableStateFlow(allGames) // set list of data where get from api
+    val games = searchText
         .debounce(1000L)
         .onEach { _isSearching.update { true } }
-        .combine(_persons) { text, persons ->
+        .combine(_games) { text, games ->
             if (text.isBlank()) {
-                persons
+                games
             } else {
                 delay(2000L)
-                persons.filter {
+                games.filter {
                     it.doseMatchSearchQuery(text)
                 }
             }
         }
         .onEach { _isSearching.update { false } }
-        .stateIn(
-            viewModelScope,
+        .stateIn(viewModelScope,
             SharingStarted.WhileSubscribed(5000),
-            _persons.value
+            _games.value
         )
 
     fun onSearchingTextChange(text: String) {
@@ -45,34 +44,36 @@ class SearchViewModel : ViewModel() {
     }
 }
 
-data class Person(val name: String) {
+data class Person(val name: String, val imageUri: String) {
     fun doseMatchSearchQuery(query: String): Boolean {
         val matchingCombinations = listOf(
             name,
             name,
             "${this.name.first()}"
         )
-
         return matchingCombinations.any {
             it.contains(query, ignoreCase = true)
         }
     }
 }
 
-private val allPerson = listOf(
+private val allGames = listOf(
     Person(
-        "Santosh Puri"
+        "Santosh Nepal",
+        "https://www.freetogame.com/g/427/thumbnail.jpg"
     ),
     Person(
-        "Hair Timsina"
+        "Hair Gautam",
+        "https://www.freetogame.com/g/475/thumbnail.jpg"
     ),
     Person(
-        "Sitaram Tamang"
+        "Sitaram Tamang",
+        "https://www.freetogame.com/g/523/thumbnail.jpg"
     ),
     Person(
-        "Ganesh Rai"
+        "Ganesh Rai",
+        "https://www.freetogame.com/g/380/thumbnail.jpg"
     ),
 )
-
 
 // https://www.youtube.com/watch?v=CfL6Dl2_dAE

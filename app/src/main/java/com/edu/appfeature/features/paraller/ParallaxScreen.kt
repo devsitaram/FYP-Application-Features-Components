@@ -22,10 +22,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.edu.appfeature.R
+import com.edu.appfeature.features.navehostwithdatapass.DataViewModel
 
 @Composable
-fun ParallaxViewScreen() {
+fun ParallaxViewScreen(navHostController: NavHostController, dataViewModel: DataViewModel) {
+
+    val data = dataViewModel.dataDetails
 
     val scrollState = rememberScrollState()
 
@@ -38,7 +43,7 @@ fun ParallaxViewScreen() {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(500.dp)
+                    .height(200.dp)
                     .graphicsLayer {
                         alpha = 1f - (scrollState.value.toFloat() / scrollState.maxValue)
                         translationY = 0.5f * scrollState.value
@@ -46,7 +51,8 @@ fun ParallaxViewScreen() {
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painterResource(id = R.mipmap.img),
+                    painter = rememberAsyncImagePainter("${ data?.imageUri }"),
+//                    painterResource(id = R.mipmap.img),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
@@ -54,14 +60,23 @@ fun ParallaxViewScreen() {
             }
             Column(modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp)) {
+                .padding(5.dp)) {
                 Text(
-                    text = "Character concept and development",
+                    text = "${ data?.name }",
                     modifier = Modifier.padding(10.dp),
                     style = TextStyle(
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
+                    )
+                )
+                Text(
+                    text = "${ data?.imageUri }",
+                    modifier = Modifier.padding(10.dp),
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.Blue
                     )
                 )
                 Text(
