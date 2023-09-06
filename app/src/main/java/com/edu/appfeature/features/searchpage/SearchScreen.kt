@@ -19,6 +19,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -40,17 +42,30 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.edu.appfeature.R
+import com.edu.appfeature.features.api.displaypage.GameViewModel
+import com.edu.appfeature.features.api.displaypage.pojo.GameItems
 import com.edu.appfeature.features.navehostwithdatapass.DataPojo
 import com.edu.appfeature.features.navehostwithdatapass.DataViewModel
 
 
+@SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchViewScreen(navHostController: NavHostController, dataViewModel: DataViewModel) {
+//    val context = LocalContext.current
+//    val gameViewModel = GameViewModel()
+//    val gameItemsList = remember {  mutableStateOf(ArrayList<GameItems>()) }
+
     val viewModel = viewModel<SearchViewModel>()
     val searchText by viewModel.searchText.collectAsState()
     val games by viewModel.games.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
+
+//    LaunchedEffect(true) {
+//        gameViewModel.getGames(context) {
+//            gameItemsList.value = it as ArrayList<GameItems>
+//        }
+//    }
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -86,13 +101,14 @@ fun SearchViewScreen(navHostController: NavHostController, dataViewModel: DataVi
                     ) {
                         items(games) { game ->
                             Text(
-                                text = game.name, // Fixed the typo here
+                                text = game.title!!, // Fixed the typo here
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(10.dp)
                                     .clickable {
                                         // navigate the custom page
-                                        val dataDetails = DataPojo(name = game.name, imageUri = game.imageUri)
+                                        val dataDetails =
+                                            DataPojo(title = game.title, imageUri = game.thumbnail!!)
                                         dataViewModel.addSubjectDetails(newSubjectDetails = dataDetails)
                                         navHostController.navigate("Parallax_Screen")
                                     },

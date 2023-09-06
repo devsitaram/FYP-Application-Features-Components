@@ -49,7 +49,7 @@ val gameViewModel = GameViewModel()
 fun GameScreen(navController: NavHostController) {
 
     val context = LocalContext.current
-    val gameItemsList = remember { mutableStateOf(ArrayList<GameItems>()) }
+        val gameItemsList = remember { mutableStateOf(ArrayList<GameItems>()) }
 
     Surface(Modifier.fillMaxWidth()) {
 

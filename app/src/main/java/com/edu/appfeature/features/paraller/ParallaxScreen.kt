@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -26,6 +27,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.edu.appfeature.R
 import com.edu.appfeature.features.navehostwithdatapass.DataViewModel
+import com.edu.appfeature.ui.indicator.CircularIndicator
 
 @Composable
 fun ParallaxViewScreen(navHostController: NavHostController, dataViewModel: DataViewModel) {
@@ -50,19 +52,23 @@ fun ParallaxViewScreen(navHostController: NavHostController, dataViewModel: Data
                     },
                 contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = rememberAsyncImagePainter("${ data?.imageUri }"),
+                if (data?.imageUri == null || data.imageUri.isEmpty()){
+                    CircularIndicator(color = Color.DarkGray, modifier = Modifier.size(40.dp))
+                } else {
+                    Image(
+                        painter = rememberAsyncImagePainter(data.imageUri),
 //                    painterResource(id = R.mipmap.img),
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
             Column(modifier = Modifier
                 .fillMaxWidth()
                 .padding(5.dp)) {
                 Text(
-                    text = "${ data?.name }",
+                    text = "${ data?.title }",
                     modifier = Modifier.padding(10.dp),
                     style = TextStyle(
                         fontSize = 25.sp,

@@ -7,10 +7,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import kotlinx.android.parcel.Parcelize
 
+// some text or data transform from one page to another page
 @Suppress("DEPRECATED_ANNOTATION")
 @Parcelize
 class DataPojo (
-    val name: String,
+    val title: String,
     val imageUri: String,
 ): Parcelable
 
