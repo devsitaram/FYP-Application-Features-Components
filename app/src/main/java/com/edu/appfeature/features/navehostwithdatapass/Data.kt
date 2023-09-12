@@ -10,15 +10,14 @@ import kotlinx.android.parcel.Parcelize
 // some text or data transform from one page to another page
 @Suppress("DEPRECATED_ANNOTATION")
 @Parcelize
-class DataPojo (
+class DataPojo(
     val title: String,
     val imageUri: String,
-): Parcelable
+) : Parcelable
 
 class DataViewModel : ViewModel() {
     var dataDetails by mutableStateOf<DataPojo?>(null)
-        private set
-    fun addSubjectDetails(newSubjectDetails: DataPojo){
+    fun addSubjectDetails(newSubjectDetails: DataPojo) {
         dataDetails = newSubjectDetails
     }
 }

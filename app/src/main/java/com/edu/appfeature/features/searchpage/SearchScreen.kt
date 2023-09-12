@@ -1,6 +1,7 @@
 package com.edu.appfeature.features.searchpage
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -35,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionResult
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -52,20 +55,11 @@ import com.edu.appfeature.features.navehostwithdatapass.DataViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchViewScreen(navHostController: NavHostController, dataViewModel: DataViewModel) {
-//    val context = LocalContext.current
-//    val gameViewModel = GameViewModel()
-//    val gameItemsList = remember {  mutableStateOf(ArrayList<GameItems>()) }
 
     val viewModel = viewModel<SearchViewModel>()
     val searchText by viewModel.searchText.collectAsState()
     val games by viewModel.games.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
-
-//    LaunchedEffect(true) {
-//        gameViewModel.getGames(context) {
-//            gameItemsList.value = it as ArrayList<GameItems>
-//        }
-//    }
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -112,6 +106,12 @@ fun SearchViewScreen(navHostController: NavHostController, dataViewModel: DataVi
                                         dataViewModel.addSubjectDetails(newSubjectDetails = dataDetails)
                                         navHostController.navigate("Parallax_Screen")
                                     },
+                            )
+                            Image(
+                                painter = rememberAsyncImagePainter(game.thumbnail),
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
                             )
                         }
                     }

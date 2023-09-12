@@ -57,7 +57,6 @@ fun ParallaxViewScreen(navHostController: NavHostController, dataViewModel: Data
                 } else {
                     Image(
                         painter = rememberAsyncImagePainter(data.imageUri),
-//                    painterResource(id = R.mipmap.img),
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop

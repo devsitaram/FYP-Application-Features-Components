@@ -20,7 +20,6 @@ class SearchViewModel : ViewModel() {
     private val _isSearching = MutableStateFlow(false)
     val isSearching = _isSearching.asStateFlow()
 
-    private val _games = MutableStateFlow(onGameList.toList())
     val games = MutableStateFlow<List<GameItems>>(emptyList())
 
     init {
@@ -39,7 +38,6 @@ class SearchViewModel : ViewModel() {
                     onGameList.addAll(apiData)
                 } else {
                     // error message
-
                 }
             }
 
@@ -51,7 +49,9 @@ class SearchViewModel : ViewModel() {
 
     fun onSearchingTextChange(text: String) {
         _searchText.value = text
-        val filteredList = onGameList.filter { it -> it.title?.contains(text) ?: false }
+        val filteredList = onGameList.filter { it ->
+            it.title?.contains(text) ?: false
+        }
         games.value = filteredList
     }
 }
