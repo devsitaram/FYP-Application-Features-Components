@@ -1,4 +1,4 @@
-package com.edu.appfeature.features.splash
+package com.edu.appfeature.features.LottieAnimation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

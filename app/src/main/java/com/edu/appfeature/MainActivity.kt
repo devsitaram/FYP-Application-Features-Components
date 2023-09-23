@@ -11,6 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.edu.appfeature.features.LottieAnimation.LottieAnimationScreen
+import com.edu.appfeature.features.datetime.DateTimeViewScreen
 import com.edu.appfeature.features.navehostwithdatapass.NavigateDataPassViewScreen
 import com.edu.appfeature.ui.theme.AppFeatureTheme
 
@@ -26,10 +28,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    SearchLists()
-                    val navHostController = rememberNavController()
-                    NavigateDataPassViewScreen(navHostController)
+                    DateTimeViewScreen()
 //                    LottieAnimationScreen()
+//                    SearchLists()
+//                    val navHostController = rememberNavController()
+//                    NavigateDataPassViewScreen(navHostController)
 //                    VideoViewScreen()
 //                    val videoUrl = "https://www.youtube.com/watch?v=fdvdd123"
 //                    val videoId = getVideoId(videoUrl)
