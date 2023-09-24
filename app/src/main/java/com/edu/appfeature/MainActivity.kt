@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.edu.appfeature.features.IntroScreenView
 import com.edu.appfeature.features.LottieAnimation.LottieAnimationScreen
 import com.edu.appfeature.features.datetime.DateTimeViewScreen
 import com.edu.appfeature.features.navehostwithdatapass.NavigateDataPassViewScreen
@@ -28,7 +29,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    DateTimeViewScreen()
+                    IntroScreenView()
+//                    DateTimeViewScreen()
 //                    LottieAnimationScreen()
 //                    SearchLists()
 //                    val navHostController = rememberNavController()
