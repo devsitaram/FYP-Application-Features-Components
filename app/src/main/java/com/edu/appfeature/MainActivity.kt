@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.edu.appfeature.features.IntroScreenView
 import com.edu.appfeature.features.LottieAnimation.LottieAnimationScreen
 import com.edu.appfeature.features.datetime.DateTimeViewScreen
+import com.edu.appfeature.features.floating_button_bar.FloatingBtnNavBarViewScreen
 import com.edu.appfeature.features.navehostwithdatapass.NavigateDataPassViewScreen
 import com.edu.appfeature.ui.theme.AppFeatureTheme
 
@@ -22,6 +23,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 //        val windows = this.window
 //        windows.statusBarColor = Color.White
+
         setContent {
             AppFeatureTheme {
                 // A surface container using the 'background' color from the theme
@@ -29,7 +31,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    IntroScreenView()
+                    FloatingBtnNavBarViewScreen()
+//                    IntroScreenView()
 //                    DateTimeViewScreen()
 //                    LottieAnimationScreen()
 //                    SearchLists()
