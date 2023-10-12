@@ -4,8 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,17 +14,23 @@ import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.FabPosition
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
+import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.filled.AddToPhotos
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -34,32 +39,30 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.edu.appfeature.R
-import com.edu.appfeature.ui.util.TextView
+import com.edu.appfeature.ui.theme.Purple40
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun FloatingBtnNavBarViewScreen() {
     val navController = rememberNavController()
+    var isPostActive by remember { mutableStateOf(false) } // Remember the state
     Scaffold(
         bottomBar = {
             BottomAppBar(
-                modifier = Modifier
-                    .height(65.dp)
-                    .clip(RoundedCornerShape(15.dp, 15.dp, 0.dp, 0.dp)),
+                modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp, 12.dp, 0.dp, 0.dp)),
                 cutoutShape = CircleShape,
-                elevation = 22.dp
+                elevation = 0.dp
             ) {
-                BottomNav(navController = navController)
+                BottomNav(navController = navController, onClick = { isPostActive = false })
             }
         },
-        floatingActionButtonPosition = androidx.compose.material3.FabPosition.Center, // Uncomment this line
+        floatingActionButtonPosition = FabPosition.Center,
+        isFloatingActionButtonDocked = true,
         floatingActionButton = {
             FloatingActionButton(
                 shape = CircleShape,
                 onClick = {
-                    Screen.Camera.route.let {
+                    ScreenList.Post.route.let {
                         navController.navigate(it) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
@@ -67,12 +70,28 @@ fun FloatingBtnNavBarViewScreen() {
                             launchSingleTop = true
                             restoreState = true
                         }
+                        isPostActive = true
                     }
-                    Screen.Camera.route.let { navController.navigate(it) }
+                    ScreenList.Post.route.let {
+                        navController.navigate(it)
+                    }
                 },
-                contentColor = Color.White
+                backgroundColor = Purple40
+//                if (isPostActive) {
+//                    Color.Green
+//                } else {
+//                    Color.White
+//                }
             ) {
-                Icon(imageVector = Icons.Filled.CameraAlt, contentDescription = "Add icon")
+                Icon(
+                    imageVector = Icons.Filled.AddToPhotos,
+                    contentDescription = "Add icon",
+                    tint = if (isPostActive) {
+                        Color.Green
+                    } else {
+                        Color.White // Change to your desired color
+                    }
+                )
             }
         }
     ) {
@@ -82,40 +101,45 @@ fun FloatingBtnNavBarViewScreen() {
 
 @SuppressLint("ResourceAsColor")
 @Composable
-fun BottomNav(navController: NavController) {
+fun BottomNav(navController: NavController, onClick:()-> Unit) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination
-    BottomNavigation(
-        modifier = Modifier
-            .padding(12.dp, 0.dp, 12.dp, 0.dp)
-            .height(100.dp),
-        elevation = 0.dp
-    ) {
-        items.forEach {
+    BottomNavigation {
+        items.forEach { screen ->
             BottomNavigationItem(
+                modifier = Modifier.fillMaxWidth(),
                 icon = {
-                    it.icon?.let {
+                    screen?.icon?.let { it ->
                         Icon(
                             imageVector = it,
                             contentDescription = "",
-                            modifier = Modifier.size(35.dp),
+                            modifier = Modifier.size(20.dp),
+                            tint = if (currentRoute?.hierarchy?.any { it.route == screen.route } == true) {
+                                Color.Green
+                            } else {
+                                Color.White
+                            }
                         )
                     }
                 },
                 label = {
-                    it.title?.let {
+                    screen?.title?.let { it ->
                         Text(
                             text = it,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = if (currentRoute?.hierarchy?.any { it.route == screen.route } == true) {
+                                Color.Green
+                            } else {
+                                Color.White
+                            }
                         )
                     }
                 },
-                selected = currentRoute?.hierarchy?.any { it.route == it.route } == true,
-
-                selectedContentColor = Color(R.color.purple_700),
-                unselectedContentColor = Color.White.copy(alpha = 0.4f),
+                selected = currentRoute?.hierarchy?.any { it.route == screen?.route } == true,
                 onClick = {
-                    it.route.let { it1 ->
-                        navController.navigate(it1) {
+                    screen?.route?.let { route ->
+                        navController.navigate(route) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
                             }
@@ -123,51 +147,95 @@ fun BottomNav(navController: NavController) {
                             restoreState = true
                         }
                     }
+                    onClick()
                 }
             )
         }
     }
 }
 
-
 @Composable
 fun MainScreenNavigation(navController: NavHostController) {
-
-    NavHost(navController, startDestination = Screen.Profile.route) {
+    NavHost(navController, startDestination = BtnNavScreen.Home.route) {
+        //home
+        composable(BtnNavScreen.Home.route) {
+            HomeScreen()
+        }
 
         //profile
-        composable(Screen.Profile.route) {
-             ProfileScreen()
-        }
-        //pickUp
-        composable(Screen.PickUp.route) {
-             PickupScreen()
+        composable(BtnNavScreen.Profile.route) {
+            ProfileScreen()
         }
 
         //camera
-        composable(Screen.Camera.route) {
-             CameraScreen()
+        composable(ScreenList.Post.route) {
+            PostScreen()
+        }
+
+        //PickUp
+        composable(BtnNavScreen.PickUp.route) {
+            PickupScreen()
+        }
+
+        //setting
+        composable(BtnNavScreen.Setting.route) {
+            SettingScreen()
         }
     }
 }
 
+
 @Composable
-fun CameraScreen() {
-    Box(modifier = Modifier.fillMaxSize().background(Color.Blue), contentAlignment = Alignment.Center){
+fun HomeScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Blue), contentAlignment = Alignment.Center
+    ) {
+        Text(text = "HomeScreen", color = Color.White)
+    }
+}
+
+@Composable
+fun ProfileScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Red), contentAlignment = Alignment.Center
+    ) {
+        Text(text = "ProfileScreen", color = Color.White)
+    }
+}
+
+@Composable
+fun PostScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Green), contentAlignment = Alignment.Center
+    ) {
         Text(text = "CameraScreen", color = Color.White)
     }
 }
 
 @Composable
 fun PickupScreen() {
-    Box(modifier = Modifier.fillMaxSize().background(Color.Green), contentAlignment = Alignment.Center){
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Yellow), contentAlignment = Alignment.Center
+    ) {
         Text(text = "PickupScreen", color = Color.White)
     }
 }
 
 @Composable
-fun ProfileScreen() {
-    Box(modifier = Modifier.fillMaxSize().background(Color.Red), contentAlignment = Alignment.Center){
-        Text(text = "ProfileScreen", color = Color.White)
+fun SettingScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Cyan), contentAlignment = Alignment.Center
+    ) {
+        Text(text = "SettingScreen", color = Color.White)
     }
 }
