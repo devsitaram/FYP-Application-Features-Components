@@ -1,6 +1,22 @@
 package com.edu.appfeature.features.coroutines
 
-import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -9,51 +25,136 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.system.measureTimeMillis
 
-class Coroutines {
+private var results by mutableStateOf("")
+private var duration by mutableStateOf("")
 
+@Composable
+fun Coroutines() {
 
-    // sequential
-    private fun sequentialApiResult(){
-        CoroutineScope(Dispatchers.IO).launch {
-            val executionTime = measureTimeMillis {
-                val count = 20
-                for (i in 0 until count) {
-                    println("Total count: $i")
+    LaunchedEffect(key1 = results, key2 = duration, block = {
+        results = results
+        duration = duration
+    })
+    // A surface container using the 'background' color from the theme
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        var num by remember { mutableIntStateOf(0) }
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(text = results)
+                Text(text = duration)
+            }
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    onClick = {
+                        parallelApiRequest(num = num)
+                        num = if (num == 2) 0 else { num + 1 }
+                    }
+                ) {
+                    Text(text = "Parallel")
+                }
+
+                Button(
+                    onClick = {
+                        sequentialApiResult()
+                    }
+                ) {
+                    Text(text = "Sequential")
                 }
             }
-            println("Execution Time: $executionTime ms")
         }
     }
+}
 
-    // parallel
-    private fun parallelApiRequest() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val executionTime = measureTimeMillis {
-                val result1 = async {
-                    Log.e("Result1", "debug: launching job1: ${Thread.currentThread()}")
-                    getResultFromApi1()
-                }.await()
+// parallel
+private fun parallelApiRequest(num: Int) {
+    CoroutineScope(Dispatchers.IO).launch {
+        val executionTime = measureTimeMillis {
 
-                val result2 = async {
-                    Log.e("Result1", "debug: launching job2: ${Thread.currentThread()}")
-                    getResultFromApi2(result1)
-                }.await()
-                println("Result 2 is :$result2")
+            val result1 = async { getResultFromApi1() }
+            val result2 = async { getResultFromApi2() }
+
+            when (num) {
+                0 -> {
+                    results =
+                        "Both success result: \nAPI 1: ${result1.await()} \nAPI 2: ${result2.await()}"
+                }
+
+                1 -> {
+                    val value1 = result1.await()
+                    val value2 = result2.await()
+                    results = if (result1 != null) {
+                        "Either success result: \n$value1"
+                    } else if (value2 != null) {
+                        "Either success result: \n$value2"
+                    } else {
+                        "Both API calls failed."
+                    }
+                }
+
+                else -> {
+                    val value1 = result1.await()
+                    results = try {
+                        "Result is: ${getResultFromApi(value1)}"
+                    } catch (e: CancellationException) {
+                        "One is success and another is exception: \n$value1 \nException caught: ${e.message}"
+                    }
+                }
             }
-            Log.e("Debug:", "Debug: Total elapsed time: $executionTime milliSeconds")
         }
+        duration = "Total elapsed time: $executionTime ms"
     }
+}
 
-    private suspend fun getResultFromApi1(): String {
-        delay(1000)
-        return "Api 1 is success."
-    }
-
-    private suspend fun getResultFromApi2(result1: String): String {
-        delay(1000)
-        if(result1.isNotEmpty()){
-            return "Api 1 is success."
+// sequential
+private fun sequentialApiResult() {
+    CoroutineScope(Dispatchers.IO).launch {
+        val executionTime = measureTimeMillis {
+            downloadWebpage(num = 100)
         }
-        throw CancellationException("Result 1 is empty")
+        results = "Sequential API call: \nExecution Time: $executionTime ms"
+    }
+}
+
+// call api 1
+private suspend fun getResultFromApi1(): String {
+    delay(100)
+    return "Api 1 is success."
+}
+
+// call api 2
+private suspend fun getResultFromApi2(): String {
+    delay(100)
+    return "Api 2 is success."
+}
+
+// depend on call api 1
+private suspend fun getResultFromApi(result: String): String {
+    delay(100)
+    return if (result == "Ap1 1") {
+        "Api result 2 is success."
+    } else {
+        throw CancellationException("Api 2 call is distorted")
+    }
+}
+
+// download web page
+private fun downloadWebpage(num: Int) {
+    for (i in 0 until num) {
+        println("Total number of download page: $i")
     }
 }
